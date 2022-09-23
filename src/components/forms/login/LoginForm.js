@@ -1,22 +1,28 @@
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import TextInput from "../../elements/form-elements/TextInput";
 import {
-  Button,
-  VStack,
-  Heading,
-  Flex,
   Box,
+  Button,
   Divider,
-  Text,
+  Flex,
+  Heading,
   IconButton,
   Link,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import { FcGoogle } from "react-icons/fc";
-import { BsArrow90DegLeft } from "react-icons/bs";
+import { Form, Formik } from "formik";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
+import { BsArrow90DegLeft } from "react-icons/bs";
+import { FcGoogle } from "react-icons/fc";
+import * as Yup from "yup";
+import TextInput from "../../elements/form-elements/TextInput";
 
-function LoginForm() {
+function LoginForm({ userExists, signInWithEmailAndPassword, signInWithGoogle }) {
+  const router = useRouter();
+  const handleSignInWithGoogle = () => {
+    signInWithGoogle()
+    router.push("/dashboard")
+  }
   return (
     <VStack maxW="400px" w="100%" mb="auto">
       <NextLink href="/" passHref>
@@ -51,11 +57,12 @@ function LoginForm() {
               .min(8, "Password is too short - should be 8 chars minimum.")
               .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
           })}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              setSubmitting(false);
-            }, 400);
+          onSubmit={({ email, password }, { setSubmitting }) => {
+            signInWithEmailAndPassword(email, password);
+            setSubmitting(false);
+            if (userExists) {
+              router.push("/dashboard");
+            }
           }}
         >
           {({ isSubmitting }) => (
@@ -75,7 +82,12 @@ function LoginForm() {
                 <Divider />
               </Flex>
 
-              <Button leftIcon={<FcGoogle />} w="100%" variant="outline">
+              <Button
+                leftIcon={<FcGoogle />}
+                w="100%"
+                variant="outline"
+                onClick={handleSignInWithGoogle}
+              >
                 Continue with Google
               </Button>
 

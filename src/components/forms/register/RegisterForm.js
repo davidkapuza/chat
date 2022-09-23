@@ -1,23 +1,34 @@
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import TextInput from "../../elements/form-elements/TextInput";
 import {
-  Button,
-  VStack,
-  Heading,
-  Flex,
   Box,
+  Button,
   Divider,
-  Text,
+  Flex,
+  Heading,
   IconButton,
   Link,
   Stack,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import { FcGoogle } from "react-icons/fc";
-import { BsArrow90DegLeft } from "react-icons/bs";
+import { Form, Formik } from "formik";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
+import { BsArrow90DegLeft } from "react-icons/bs";
+import { FcGoogle } from "react-icons/fc";
+import * as Yup from "yup";
+import TextInput from "../../elements/form-elements/TextInput";
 
-function LoginForm() {
+function RegisterForm({
+  userExists,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithGoogle,
+}) {
+  const router = useRouter();
+  const handleSignInWithGoogle = () => {
+    signInWithGoogle()
+    router.push("/dashboard")
+  }
   return (
     <VStack maxW="400px" w="100%" mb="auto">
       <NextLink href="/" passHref>
@@ -51,10 +62,8 @@ function LoginForm() {
             password2: "",
           }}
           validationSchema={Yup.object().shape({
-            name: Yup.string()
-            .required("Required"),
-            surname: Yup.string()
-            .required("Required"),
+            name: Yup.string().required("Required"),
+            surname: Yup.string().required("Required"),
             email: Yup.string()
               .email("Invalid email adress")
               .required("Required"),
@@ -63,21 +72,31 @@ function LoginForm() {
               .min(8, "Password is too short - should be 8 chars minimum.")
               .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
             password2: Yup.string()
-            .required("Required.")
-            .oneOf([Yup.ref('password'), null], 'Passwords must match')
+              .required("Required.")
+              .oneOf([Yup.ref("password"), null], "Passwords must match"),
           })}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              setSubmitting(false);
-            }, 400);
+          onSubmit={async (
+            { name, surname, email, password },
+            { setSubmitting }
+          ) => {
+            createUserWithEmailAndPassword(email, password)
+            await updateProfile({ displayName: `${name} ${surname}` });
+            setSubmitting(false);
+            if (userExists) {
+              router.push("/dashboard");
+            }
           }}
         >
           {({ isSubmitting }) => (
             <Form>
               <Stack direction={["column", "row"]}>
-                <TextInput type="text" name="name" placeholder="Name" m="0"/>
-                <TextInput type="text" name="surname" placeholder="Surname" m="0"/>
+                <TextInput type="text" name="name" placeholder="Name" m="0" />
+                <TextInput
+                  type="text"
+                  name="surname"
+                  placeholder="Surname"
+                  m="0"
+                />
               </Stack>
               <TextInput type="email" name="email" placeholder="Email" />
               <TextInput
@@ -99,7 +118,12 @@ function LoginForm() {
                 <Divider />
               </Flex>
 
-              <Button leftIcon={<FcGoogle />} w="100%" variant="outline">
+              <Button
+                leftIcon={<FcGoogle />}
+                w="100%"
+                variant="outline"
+                onClick={handleSignInWithGoogle}
+              >
                 Continue with Google
               </Button>
 
@@ -121,4 +145,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default RegisterForm;

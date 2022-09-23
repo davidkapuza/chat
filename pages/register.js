@@ -1,9 +1,28 @@
 import { Box, Container, Stack } from "@chakra-ui/react";
+import {
+  useCreateUserWithEmailAndPassword,
+  useSignInWithGoogle,
+  useUpdateProfile,
+} from "react-firebase-hooks/auth";
 import Image from "next/image";
+import { auth } from "../firebase.config";
 import RegisterPageImg from "../public/images/Register.png";
+import Loader from "../src/components/elements/loader/Loader";
 import RegisterForm from "../src/components/forms/register/RegisterForm";
 
 function Register() {
+  const [createUserWithEmailAndPassword, user, loading, error] =
+    useCreateUserWithEmailAndPassword(auth);
+  const [updateProfile, updating] = useUpdateProfile(auth);
+  const [signInWithGoogle, googleUser, googleloading, googleError] =
+    useSignInWithGoogle(auth);
+  const userExists = user || googleUser
+  if (loading || updating || googleloading) {
+    return <Loader />;
+  }
+  if (error || googleError) {
+    return "Err...";
+  }
   return (
     <Container
       maxW={"7xl"}
@@ -16,7 +35,12 @@ function Register() {
         direction={["column", "row"]}
         justify={["start", "center", "center", "space-between"]}
       >
-        <RegisterForm />
+        <RegisterForm
+          userExists={userExists}
+          createUserWithEmailAndPassword={createUserWithEmailAndPassword}
+          updateProfile={updateProfile}
+          signInWithGoogle={signInWithGoogle}
+        />
 
         <Box w="50%" display={{ base: "none", lg: "block" }}>
           <Image
