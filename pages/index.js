@@ -12,7 +12,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import WelcomeImg from "../public/images/Welcome.png";
-import AppContainer from "../src/components/layout/AppContainer";
 
 function Home() {
 

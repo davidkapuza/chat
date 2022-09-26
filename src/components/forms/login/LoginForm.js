@@ -1,4 +1,8 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
   Divider,
@@ -7,22 +11,41 @@ import {
   IconButton,
   Link,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
+import { onAuthStateChanged } from "firebase/auth";
 import { Form, Formik } from "formik";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import {
+  useSignInWithEmailAndPassword,
+  useSignInWithGoogle
+} from "react-firebase-hooks/auth";
 import { BsArrow90DegLeft } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import * as Yup from "yup";
+import { auth } from "../../../../firebase.config";
 import TextInput from "../../elements/form-elements/TextInput";
 
-function LoginForm({ userExists, signInWithEmailAndPassword, signInWithGoogle }) {
+function LoginForm() {
   const router = useRouter();
-  const handleSignInWithGoogle = () => {
-    signInWithGoogle()
-    router.push("/dashboard")
-  }
+
+  const [signInWithEmailAndPassword, authUser, authLoading, authSignInError] =
+    useSignInWithEmailAndPassword(auth);
+  const [signInWithGoogle, googleAuthUser, googleAuthLoading, googleAuthError] =
+    useSignInWithGoogle(auth);
+
+  const error = authSignInError || googleAuthError;
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/dashboard");
+      }
+    });
+  }, []);
+
   return (
     <VStack maxW="400px" w="100%" mb="auto">
       <NextLink href="/" passHref>
@@ -34,7 +57,7 @@ function LoginForm({ userExists, signInWithEmailAndPassword, signInWithGoogle })
           icon={<BsArrow90DegLeft />}
         />
       </NextLink>
-      <Box p={["20px 0 40px", "50px 0 70px"]} w="100%">
+      <Box p={["20px 0 40px", "50px 0 60px"]} w="100%">
         <Heading size={["xl", "2xl"]} fontWeight="bold" mb={["10px", "20px"]}>
           Let's sign you in.
         </Heading>
@@ -46,6 +69,15 @@ function LoginForm({ userExists, signInWithEmailAndPassword, signInWithGoogle })
         </Text>
       </Box>
       <Box w="100%">
+        {error && (
+          <Alert status="error">
+            <AlertIcon />
+            <Box>
+              <AlertTitle>Error!</AlertTitle>
+              <AlertDescription>{error.message}</AlertDescription>
+            </Box>
+          </Alert>
+        )}
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={Yup.object().shape({
@@ -57,12 +89,13 @@ function LoginForm({ userExists, signInWithEmailAndPassword, signInWithGoogle })
               .min(8, "Password is too short - should be 8 chars minimum.")
               .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
           })}
-          onSubmit={({ email, password }, { setSubmitting }) => {
+          onSubmit={async (
+            { email, password },
+            { setSubmitting, resetForm }
+          ) => {
             signInWithEmailAndPassword(email, password);
+            resetForm();
             setSubmitting(false);
-            if (userExists) {
-              router.push("/dashboard");
-            }
           }}
         >
           {({ isSubmitting }) => (
@@ -86,7 +119,7 @@ function LoginForm({ userExists, signInWithEmailAndPassword, signInWithGoogle })
                 leftIcon={<FcGoogle />}
                 w="100%"
                 variant="outline"
-                onClick={handleSignInWithGoogle}
+                onClick={signInWithGoogle}
               >
                 Continue with Google
               </Button>

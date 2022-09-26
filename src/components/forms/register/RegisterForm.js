@@ -9,26 +9,51 @@ import {
   Stack,
   Text,
   VStack,
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
 } from "@chakra-ui/react";
+import { onAuthStateChanged } from "firebase/auth";
 import { Form, Formik } from "formik";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import {
+  useCreateUserWithEmailAndPassword,
+  useSignInWithGoogle,
+  useUpdateProfile
+} from "react-firebase-hooks/auth";
 import { BsArrow90DegLeft } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import * as Yup from "yup";
+import { auth } from "../../../../firebase.config";
 import TextInput from "../../elements/form-elements/TextInput";
 
-function RegisterForm({
-  userExists,
-  createUserWithEmailAndPassword,
-  updateProfile,
-  signInWithGoogle,
-}) {
+
+function RegisterForm() {
   const router = useRouter();
-  const handleSignInWithGoogle = () => {
-    signInWithGoogle()
-    router.push("/dashboard")
-  }
+
+  const [
+    createUserWithEmailAndPassword,
+    authUser,
+    authLoading,
+    authSignUpError,
+  ] = useCreateUserWithEmailAndPassword(auth);
+  const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+  const [signInWithGoogle, googleUser, googleAuthLoading, googleAuthError] =
+    useSignInWithGoogle(auth);
+
+  const error = authSignUpError || googleAuthError || updateError;
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/dashboard");
+      }
+    });
+  }, []);
+
   return (
     <VStack maxW="400px" w="100%" mb="auto">
       <NextLink href="/" passHref>
@@ -53,6 +78,15 @@ function RegisterForm({
         </Text>
       </Box>
       <Box w="100%">
+        {error && (
+          <Alert status="error">
+            <AlertIcon />
+            <Box>
+              <AlertTitle>Error!</AlertTitle>
+              <AlertDescription>{error.message}</AlertDescription>
+            </Box>
+          </Alert>
+        )}
         <Formik
           initialValues={{
             name: "",
@@ -77,14 +111,12 @@ function RegisterForm({
           })}
           onSubmit={async (
             { name, surname, email, password },
-            { setSubmitting }
+            { setSubmitting, resetForm }
           ) => {
-            createUserWithEmailAndPassword(email, password)
+            createUserWithEmailAndPassword(email, password);
             await updateProfile({ displayName: `${name} ${surname}` });
+            resetForm();
             setSubmitting(false);
-            if (userExists) {
-              router.push("/dashboard");
-            }
           }}
         >
           {({ isSubmitting }) => (
@@ -122,7 +154,7 @@ function RegisterForm({
                 leftIcon={<FcGoogle />}
                 w="100%"
                 variant="outline"
-                onClick={handleSignInWithGoogle}
+                onClick={signInWithGoogle}
               >
                 Continue with Google
               </Button>

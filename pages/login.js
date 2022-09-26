@@ -2,26 +2,8 @@ import { Box, Container, Stack } from "@chakra-ui/react";
 import Image from "next/image";
 import LoginPageImg from "../public/images/Login.png";
 import LoginForm from "../src/components/forms/login/LoginForm";
-import { useRouter } from "next/router";
-import {
-  useSignInWithEmailAndPassword,
-  useSignInWithGoogle,
-} from "react-firebase-hooks/auth";
-import Loader from "../src/components/elements/loader/Loader";
-import { auth } from "../firebase.config";
 
 function Login() {
-  const [signInWithEmailAndPassword, user, loading, error] =
-    useSignInWithEmailAndPassword(auth);
-  const [signInWithGoogle, googleUser, googleloading, googleError] =
-    useSignInWithGoogle(auth);
-  const userExists = user || googleUser
-  if (loading || googleloading) {
-    return <Loader />;
-  }
-  if (error || googleError) {
-    return "Err...";
-  }
   return (
     <Container
       maxW={"7xl"}
@@ -34,11 +16,7 @@ function Login() {
         direction={["column", "row"]}
         justify={["start", "center", "center", "space-between"]}
       >
-        <LoginForm
-          userExists={userExists}
-          signInWithEmailAndPassword={signInWithEmailAndPassword}
-          signInWithGoogle={signInWithGoogle}
-        />
+        <LoginForm />
 
         <Box w="50%" display={{ base: "none", lg: "block" }}>
           <Image
