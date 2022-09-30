@@ -1,40 +1,33 @@
 import {
+  Box,
   Button,
   Container,
-  Stack,
   Flex,
-  IconButton,
   Heading,
-  Text,
   Icon,
-  HStack,
-  VStack,
-  Box,
+  IconButton,
   Input,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
-import { signOut } from "firebase/auth";
-import { useRouter } from "next/router";
-import React from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase.config";
-import Loader from "../src/components/elements/loader/Loader";
 import Avatar from "boring-avatars";
-import { FiMessageSquare } from "react-icons/fi";
-import { BsBookmarkCheck } from "react-icons/bs";
+import { signOut } from "firebase/auth";
+import React from "react";
 import { BiCheckDouble } from "react-icons/bi";
+import { BsBookmarkCheck } from "react-icons/bs";
+import { FiMessageSquare } from "react-icons/fi";
+import  {useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth'
+import Loader from "@/common/components/elements/loader/Loader";
+import { getAuth } from "firebase/auth";
 
 function Dashboard() {
-  const router = useRouter();
-  const [user, loading] = useAuthState(auth);
-  console.log(user)
+  const auth = getAuth()
+  const AuthUser = useAuthUser()
+
   const signOutHandler = () => {
-    signOut(auth).then(() => {
-      router.push("/login");
-    });
+    signOut(auth)
   };
-  if (loading) {
-    return <Loader></Loader>;
-  }
+
   return (
     <>
       <Container h="100vh" maxW={"7xl"}>
@@ -121,4 +114,10 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default withAuthUser({
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+  LoaderComponent: Loader,
+})(Dashboard)
+
+

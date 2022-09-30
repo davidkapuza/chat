@@ -1,20 +1,16 @@
 import {
   Box,
-  Button,
-  ButtonGroup,
-  chakra,
-  Container,
+  Button, Container,
   Heading,
   Stack,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import WelcomeImg from "../public/images/Welcome.png";
+import WelcomeImg from "../../public/images/Welcome.png";
 
 function Home() {
-
   return (
     <Container
       maxW={"7xl"}
@@ -51,26 +47,14 @@ function Home() {
             incididunt ut.
           </Text>
 
-          <ButtonGroup
-            mt="5em"
-            width="240px"
-            background="gray.100"
-            borderRadius="20px"
-          >
-            <Link href="/register" passHref>
-              <Button as="a" size="lg" colorScheme="brand" w="65%">
-                Register
+          <Link href="/auth" passHref >
+              <Button as="a" size="lg" colorScheme="brand" mt="5em">
+                Lets start!
               </Button>
             </Link>
-            <Link href="/login" passHref>
-              <Button as="a" size="lg" w="50%">
-                Sign in
-              </Button>
-            </Link>
-          </ButtonGroup>
         </Box>
       </Stack>
-    </Container>
+      </Container>
   );
 }
 
