@@ -36,8 +36,12 @@ function SignUpForm({
       ) => {
         setSubmitting(true);
         createUserWithEmailAndPassword(email, password).then(async () => {
-          // TODO: update photoURL
-          await updateProfile({ displayName: `${name} ${surname}` });
+          await updateProfile({
+            displayName: `${name} ${surname}`,
+            photoURL: `https://avatars.dicebear.com/api/open-peeps/${
+              name + surname
+            }.svg?background=%23E2E8F0`,
+          });
         });
         resetForm();
         setSubmitting(false);

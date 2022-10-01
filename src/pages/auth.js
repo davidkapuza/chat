@@ -67,7 +67,7 @@ function Auth() {
             pos="relative"
             objectFit="contain"
             src={AuthImg}
-            alt={"Auth page image"}
+            alt="Auth page image"
           />
         </Box>
       </Stack>

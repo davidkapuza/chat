@@ -7,7 +7,15 @@ export const InputStyles = {
         mt: "10px",
         fontSize: "13px",
         fontWeight: "medium",
-        borderRadius: "15px",
+        borderRadius: "2xl",
+        height: "55px",
+      },
+    },
+    filled: {
+      field: {
+        fontSize: "13px",
+        fontWeight: "medium",
+        borderRadius: "2xl",
         height: "55px",
       },
     },
