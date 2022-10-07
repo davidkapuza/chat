@@ -4,7 +4,7 @@ import SignInForm from "@/modules/auth/components/forms/SignInForm";
 import SignUpForm from "@/modules/auth/components/forms/SignUpForm";
 import { Box, Container, Stack, useBoolean, Flex } from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
-import { AuthAction, withAuthUser } from "next-firebase-auth";
+import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 import Image from "next/image";
 import AuthImg from "public/images/Auth.png";
 import {
@@ -16,19 +16,20 @@ import {
 
 function Auth() {
   const [flag, setFlag] = useBoolean();
+  const AuthUser = useAuthUser()
   const auth = getAuth();
 
-  const [createUserWithEmailAndPassword, _user, _loading, authSignUpError] =
+  const [createUserWithEmailAndPassword,,, authSignUpError] =
     useCreateUserWithEmailAndPassword(auth);
-  const [signInWithEmailAndPassword, __user, __loading, authSignInError] =
+  const [signInWithEmailAndPassword,,, authSignInError] =
     useSignInWithEmailAndPassword(auth);
-  const [signInWithGoogle, ___user, ___loading, googleAuthError] =
+  const [signInWithGoogle,,, googleAuthError] =
     useSignInWithGoogle(auth);
-  const [updateProfile, updating, updateError] = useUpdateProfile(auth);
-
+  const [updateProfile,, updateError] = useUpdateProfile(auth);
   const authError =
     authSignUpError || authSignInError || googleAuthError || updateError;
-
+  
+  
   return (
     <Container
       maxW={"7xl"}

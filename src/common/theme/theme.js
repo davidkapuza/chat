@@ -14,6 +14,17 @@ const theme = extendTheme({
       500: "#141414",
       600: "#39393B",
     },
+    main: {
+      500: "#E6F5FE",
+      600: "#CFEBFC",
+      Solitude: "#E6F5FE",
+      LightGray: "#B4BFCF",
+      Black: "#070606",
+      Purple: "#070606",
+      Nevada: "#646768",
+      Gray: "#707888",
+      Red: "#BD4736"
+    }
   },
   components: {
     Button,

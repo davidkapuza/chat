@@ -1,197 +1,215 @@
+import Loader from "@/common/components/elements/loader/Loader";
 import {
+  Avatar,
   Box,
   Button,
   Flex,
+  FormControl,
   Heading,
+  HStack,
   Icon,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftElement,
   Stack,
   Text,
-  Avatar,
-  HStack,
-  InputGroup,
+  useDisclosure,
   useMediaQuery,
-  InputLeftElement,
-  Container,
   VStack,
 } from "@chakra-ui/react";
-import { signOut } from "firebase/auth";
-import React from "react";
-import { BiCheckDouble } from "react-icons/bi";
+import { getAuth, signOut } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import {
-  AiOutlineUsergroupAdd,
   AiOutlineMore,
   AiOutlineUser,
+  AiOutlineUsergroupAdd,
 } from "react-icons/ai";
-import { IoChatboxEllipsesOutline, IoBookmarkOutline } from "react-icons/io5";
-import { IoIosArrowBack, IoMdCheckmark } from "react-icons/io";
-import { RiSearchLine } from "react-icons/ri";
-import { useAuthUser, withAuthUser, AuthAction } from "next-firebase-auth";
-import Loader from "@/common/components/elements/loader/Loader";
-import { getAuth } from "firebase/auth";
+import { BiCheckDouble } from "react-icons/bi";
+import { IoMdCheckmark } from "react-icons/io";
+import { IoBookmarkOutline, IoChatboxEllipsesOutline } from "react-icons/io5";
+import { RiSearchLine, RiSendPlaneFill } from "react-icons/ri";
+import Chat from "./[...slug]";
+const SearchUsersModal = dynamic(() =>
+  import("@/common/components/modals/users-search/SearchUsersModal")
+);
 
-function Chat() {
+function Dashboard() {
   const auth = getAuth();
+  const router = useRouter();
   const AuthUser = useAuthUser();
-  const [isSmallerThanMD] = useMediaQuery("(max-width: 48em)");
+  const db = getFirestore();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [isSmallerThanMD] = useMediaQuery("(max-width: 48em)");
   const signOutHandler = () => {
     signOut(auth);
   };
 
   return (
-    <Stack direction="row">
-      <Flex
-        // ! Navbar
-        position={{ base: "fixed", md: "relative" }}
-        bottom="0"
-        zIndex="10"
-        bg="white"
-        direction={{ base: "row", md: "column" }}
-        justify={{ base: "center", md: "start" }}
-        align="center"
-        h={{ base: "120px", md: "100vh" }}
-        w={{ base: "100%", md: "100px" }}
-        pt="40px"
-      >
-        {isSmallerThanMD ? (
-          <IconButton variant="ghost" icon={<AiOutlineUser />} />
-        ) : (
-          <Avatar name={AuthUser.displayName} src={AuthUser.photoURL} />
-        )}
-
-        <IconButton
-          variant="ghost"
-          icon={<IoChatboxEllipsesOutline />}
-        ></IconButton>
-        <IconButton variant="ghost" icon={<IoBookmarkOutline />} />
-      </Flex>
-
-      <Stack
-        // ! Sidebar
-        direction="column"
-        borderEnd="1px solid"
-        borderColor="inherit"
-        h="100vh"
-        w={{ base: "100%", md: "500px" }}
-        p="40px 15px"
-        overflowY="scroll"
-      >
-        <HStack
-        // ! SidebarHeader
-        >
-          <Heading size="lg" mr="auto">
-            Chat
-          </Heading>
-          <IconButton variant="ghost" icon={<AiOutlineUsergroupAdd />} />
-          <IconButton variant="ghost" icon={<AiOutlineMore />} />
-        </HStack>
-        <Box w="100%">
-          <InputGroup m="25px 0">
-            <InputLeftElement>
-              <RiSearchLine />
-            </InputLeftElement>
-            <Input type="text" variant="filled" placeholder="Search..." />
-          </InputGroup>
-        </Box>
-        <Flex
-          // ! ChatItem
-          w="100%"
+    <>
+      {isOpen && <SearchUsersModal isOpen={isOpen} onClose={onClose} />}
+      <Flex direction="row">
+        <Stack
+          // ! Navbar
+          position={{ base: "fixed", md: "relative" }}
+          bottom="0"
+          zIndex="10"
+          bg="white"
+          direction={{ base: "row", md: "column" }}
+          justify={{ base: "center", md: "start" }}
           align="center"
-          p="15px 10px"
-          borderRadius="2xl"
-          _hover={{ bg: "gray.100", cursor: "pointer" }}
+          h={{ base: "120px", md: "100vh" }}
+          minW={{ base: "100%", md: "100px" }}
+          pt="40px"
         >
-          <Avatar
-            name="Jhon Doe"
-            src="https://avatars.dicebear.com/api/open-peeps/JhonDoe.svg?background=%23E2E8F0"
-          />
-          <Box ml="15px">
-            <Heading size="sm">Jhon Doe</Heading>
-            <Text fontSize="small">Some text from jhonny</Text>
-          </Box>
-          <Icon ml="auto" color="green.300" as={BiCheckDouble}></Icon>
-        </Flex>
-      </Stack>
-      <VStack
-        // ! Chat
-        w="100%"
-        pt="40px"
-        direction="column"
-        display={{ base: "none", md: "flex" }}
-      >
-        <HStack
-          w="100%"
-          // ! ChatHeader
-        >
-          <IconButton variant="ghost" icon={<IoIosArrowBack />} />
-          <Avatar
-            mr="auto !important"
-            name="Jhon Doe"
-            src="https://avatars.dicebear.com/api/open-peeps/JhonDoe.svg?background=%23E2E8F0"
-          />
+          {isSmallerThanMD ? (
+            <IconButton variant="ghost" icon={<AiOutlineUser />} />
+          ) : (
+            <Avatar
+              name={AuthUser.displayName}
+              src={AuthUser.photoURL}
+              mb="8"
+            />
+          )}
 
-          <Button onClick={signOutHandler}>Sign Out</Button>
+          <IconButton
+            variant="ghost"
+            icon={<IoChatboxEllipsesOutline />}
+          ></IconButton>
+          <IconButton variant="ghost" icon={<IoBookmarkOutline />} />
+        </Stack>
 
-          <Button variant="solid" leftIcon={<IoMdCheckmark />}>
-            Friends
-          </Button>
-          <IconButton variant="ghost" icon={<AiOutlineMore />} />
-        </HStack>
-        <VStack
-          // ! Messeges
-          w="100%"
-          p="40px 40px"
+        <Stack
+          // ! Sidebar
+          direction="column"
+          borderEnd="1px solid"
+          borderColor="inherit"
+          h="100vh"
+          w={{ base: "100%", md: "500px" }}
+          p="40px 15px"
           overflowY="scroll"
         >
+          <HStack
+          // ! SidebarHeader
+          >
+            <Heading size="lg" mr="auto">
+              Chat
+            </Heading>
+            <IconButton
+              variant="ghost"
+              onClick={onOpen}
+              icon={<AiOutlineUsergroupAdd />}
+            />
+            <IconButton variant="ghost" icon={<AiOutlineMore />} />
+          </HStack>
+          <Box w="100%">
+            <InputGroup m="25px 0">
+              <InputLeftElement>
+                <RiSearchLine />
+              </InputLeftElement>
+              <Input type="text" variant="filled" placeholder="Search..." />
+            </InputGroup>
+          </Box>
           <Flex
-            // ! Messege
-            direction="row"
-            alignSelf="flex-start" maxW="300px">
+            // ! SidebarItem
+            w="100%"
+            align="center"
+            p="15px 10px"
+            borderRadius="2xl"
+            _hover={{ bg: "gray.100", cursor: "pointer" }}
+            onClick={() => router.push("/chat/id")}
+          >
             <Avatar
-              mr="15px"
               name="Jhon Doe"
               src="https://avatars.dicebear.com/api/open-peeps/JhonDoe.svg?background=%23E2E8F0"
             />
-            <Box>
-              <Text fontSize="small">Jhon Doe</Text>
-              <Text
-                fontSize="small"
-                borderRadius="0 20px 20px 20px"
-                bg="#E6F5FE"
-                p="4"
-              >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </Text>
+            <Box ml="15px">
+              <Heading size="sm">Jhon Doe</Heading>
+              <Text fontSize="small">Some text from jhonny</Text>
             </Box>
+            <Icon ml="auto" color="green.300" as={BiCheckDouble}></Icon>
           </Flex>
-          <Flex
-            // ! MyMessege
-            direction="row-reverse"
-            alignSelf="flex-end" maxW="300px">
+        </Stack>
+        <VStack
+          // ! Chat
+          w="100%"
+          p="40px 30px"
+          direction="column"
+          display={{ base: "none", md: "flex" }}
+          position="relative"
+          h="100vh"
+        >
+          <HStack
+            w="100%"
+            spacing="4"
+            // ! ChatHeader
+          >
+            {/* 
+          // * Only on mobile
+          <IconButton variant="ghost" icon={<IoIosArrowBack />} /> 
+          */}
             <Avatar
-              ml="15px"
-              name={AuthUser.displayName}
-              src={AuthUser.photoURL}
+              size="md"
+              name="Jhon Doe"
+              src="https://avatars.dicebear.com/api/open-peeps/JhonDoe.svg?background=%23E2E8F0"
             />
-            <Box>
-              <Text fontSize="small" textAlign="right">{AuthUser.displayName}</Text>
-              <Text
-                fontSize="small"
-                borderRadius="20px 0 20px 20px"
-                bg="gray.100"
-                p="4"
-              >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </Text>
-            </Box>
-          </Flex>
+
+            <Heading mr="auto !important" size="sm">
+              Jhon Doe
+            </Heading>
+            <Button
+              variant="solidSm"
+              colorScheme="main"
+              onClick={signOutHandler}
+            >
+              Sign Out
+            </Button>
+
+            <Button
+              variant="solidSm"
+              colorScheme="main"
+              leftIcon={<IoMdCheckmark />}
+            >
+              Friends
+            </Button>
+            <IconButton variant="ghost" icon={<AiOutlineMore />} />
+          </HStack>
+          <VStack
+            // ! Messeges
+            w="100%"
+            h="100%"
+            p="5"
+            overflowY="scroll"
+            spacing="20px"
+          >
+            <Chat />
+          </VStack>
+
+          <FormControl
+            as="form"
+            display="flex"
+            direction="row"
+            position="absolute"
+            bottom="0"
+            alignItems="center"
+            p="20px 30px 40px"
+            bg="white"
+          >
+            <Input type="text" placeholder="Type a messege..." />
+            <IconButton
+              ml="5"
+              variant="solid"
+              colorScheme="brand"
+              icon={<Icon color="white" as={RiSendPlaneFill} />}
+            />
+          </FormControl>
         </VStack>
-      </VStack>
-    </Stack>
+      </Flex>
+    </>
   );
 }
 
@@ -199,4 +217,4 @@ export default withAuthUser({
   whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
   whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
   LoaderComponent: Loader,
-})(Chat);
+})(Dashboard);

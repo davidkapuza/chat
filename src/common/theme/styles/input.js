@@ -4,7 +4,6 @@ export const InputStyles = {
   variants: {
     outline: {
       field: {
-        mt: "10px",
         fontSize: "13px",
         fontWeight: "medium",
         borderRadius: "2xl",

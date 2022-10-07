@@ -3,12 +3,18 @@ import { Form, Formik } from "formik";
 import { FcGoogle } from "react-icons/fc";
 import * as Yup from "yup";
 import TextInput from "../elements/TextInput";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 function SignUpForm({
   createUserWithEmailAndPassword,
   signInWithGoogle,
   updateProfile,
 }) {
+  const db = getFirestore();
+  const auth = getAuth();
+
   return (
     <Formik
       initialValues={{
@@ -35,12 +41,17 @@ function SignUpForm({
         { setSubmitting, resetForm }
       ) => {
         setSubmitting(true);
+        const displayName = `${name} ${surname}`;
+        const photoURL = `https://avatars.dicebear.com/api/open-peeps/${
+          name + surname
+        }.svg?background=%23E2E8F0`;
         createUserWithEmailAndPassword(email, password).then(async () => {
           await updateProfile({
-            displayName: `${name} ${surname}`,
-            photoURL: `https://avatars.dicebear.com/api/open-peeps/${
-              name + surname
-            }.svg?background=%23E2E8F0`,
+            displayName,
+            photoURL,
+          });
+          await setDoc(doc(db, "users", auth.currentUser.uid), {
+            uid: auth.currentUser.uid, email, displayName, photoURL,
           });
         });
         resetForm();
