@@ -40,7 +40,7 @@ function SearchUsersModal({ isOpen, onClose }) {
   const firestore = getFirestore();
   const dispatch = useDispatch();
   // @ts-ignore
-  const host = useSelector((state) => state.user.user);
+  const host = useSelector((state) => state.user.props);
   const [userNameQuery, setUserNameQuery] = useState("");
   const q =
     userNameQuery &&

@@ -1,10 +1,23 @@
+import { updateUser } from "@/app/slices/user-slice";
 import { Button, Divider, Flex, Text } from "@chakra-ui/react";
+import { getAuth } from "firebase/auth";
+import { doc, getFirestore } from "firebase/firestore";
 import { Form, Formik } from "formik";
+import React from "react";
+import {
+  useDocumentDataOnce,
+} from "react-firebase-hooks/firestore";
 import { FcGoogle } from "react-icons/fc";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import TextInput from "../elements/TextInput";
 
 function SignInForm({ signInWithEmailAndPassword, signInWithGoogle }) {
+  const dispatch = useDispatch();
+  const firestore = getFirestore();
+  const auth = getAuth();
+
+
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
@@ -15,8 +28,7 @@ function SignInForm({ signInWithEmailAndPassword, signInWithGoogle }) {
           .min(8, "Password is too short - should be 8 chars minimum.")
           .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
       })}
-      onSubmit={async ({ email, password }, { setSubmitting, resetForm }) => {
-        setSubmitting(true);
+      onSubmit={({ email, password }, { setSubmitting, resetForm }) => {
         signInWithEmailAndPassword(email, password);
         resetForm();
         setSubmitting(false);

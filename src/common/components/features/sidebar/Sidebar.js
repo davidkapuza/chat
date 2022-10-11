@@ -28,13 +28,15 @@ import React, { useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineMore, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { RiSearchLine } from "react-icons/ri";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Alert from "@/components/elements/alert/Alert";
 
 function Sidebar({ onOpen, loadMessages }) {
   const firestore = getFirestore();
   // @ts-ignore
-  const user = useSelector(state => state.user.user)
+  const user = useSelector((state) => state.user.props)
+
+  const dispatch = useDispatch()
   const [userNameQuery, setUserNameQuery] = useState("");
   const q = userNameQuery
     ? query(

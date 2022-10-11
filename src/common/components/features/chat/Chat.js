@@ -8,8 +8,12 @@ import React from "react";
 import { AiOutlineMore } from "react-icons/ai";
 import { IoMdCheckmark } from "react-icons/io";
 import { RiSendPlaneFill } from "react-icons/ri";
+import { useSelector } from "react-redux";
 
 function Chat({ signOut }) {
+  // @ts-ignore
+  const chatId = useSelector(state => state.chat.id)
+  
   return (
     <VStack
       // ! Chat

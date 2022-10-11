@@ -1,6 +1,7 @@
 import Loader from "@/components/elements/loader/Loader";
 import Chat from "@/components/features/chat/Chat";
 import Sidebar from "@/components/features/sidebar/Sidebar";
+import useAuth from "@/modules/hooks/useAuth";
 import {
   Avatar,
   Flex,
@@ -17,6 +18,7 @@ import { AiOutlineUser } from "react-icons/ai";
 import { IoBookmarkOutline, IoChatboxEllipsesOutline } from "react-icons/io5";
 
 function Dashboard() {
+  const [isAuthed, error] = useAuth()
   const auth = getAuth();
   const AuthUser = useAuthUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -26,61 +28,64 @@ function Dashboard() {
         import("@/common/components/modals/search-users/SearchUsers")
       )
     : null;
-  return (
-    <>
-      {isOpen && (
-        <Suspense fallback={<Loader />}>
-          <SearchUsersModal
-            // @ts-ignore
-            isOpen={isOpen}
-            onClose={onClose}
-          />
-        </Suspense>
-      )}
+ 
+  if (isAuthed) {
+    return (
+      <>
+        {isOpen && (
+          <Suspense fallback={<Loader />}>
+            <SearchUsersModal
+              // @ts-ignore
+              isOpen={isOpen}
+              onClose={onClose}
+            />
+          </Suspense>
+        )}
 
-      <Flex direction="row">
-        <Stack
-          // ! Navbar
-          position={{ base: "fixed", md: "relative" }}
-          bottom="0"
-          zIndex="10"
-          bg="white"
-          direction={{ base: "row", md: "column" }}
-          justify={{ base: "center", md: "start" }}
-          align="center"
-          h={{ base: "120px", md: "100vh" }}
-          minW={{ base: "100%", md: "100px" }}
-          pt="40px"
-        >
-          {isSmallerThanMD ? (
+        <Flex direction="row">
+          <Stack
+            // ! Navbar
+            position={{ base: "fixed", md: "relative" }}
+            bottom="0"
+            zIndex="10"
+            bg="white"
+            direction={{ base: "row", md: "column" }}
+            justify={{ base: "center", md: "start" }}
+            align="center"
+            h={{ base: "120px", md: "100vh" }}
+            minW={{ base: "100%", md: "100px" }}
+            pt="40px"
+          >
+            {isSmallerThanMD ? (
+              <IconButton
+                variant="ghost"
+                icon={<AiOutlineUser />}
+                aria-label="user profile"
+              />
+            ) : (
+              <Avatar
+                name={AuthUser.displayName}
+                src={AuthUser.photoURL}
+                mb="8"
+              />
+            )}
             <IconButton
               variant="ghost"
-              icon={<AiOutlineUser />}
-              aria-label="user profile"
+              icon={<IoChatboxEllipsesOutline />}
+              aria-label="chat section"
+            ></IconButton>
+            <IconButton
+              variant="ghost"
+              icon={<IoBookmarkOutline />}
+              aria-label="favourites section"
             />
-          ) : (
-            <Avatar
-              name={AuthUser.displayName}
-              src={AuthUser.photoURL}
-              mb="8"
-            />
-          )}
-          <IconButton
-            variant="ghost"
-            icon={<IoChatboxEllipsesOutline />}
-            aria-label="chat section"
-          ></IconButton>
-          <IconButton
-            variant="ghost"
-            icon={<IoBookmarkOutline />}
-            aria-label="favourites section"
-          />
-        </Stack>
-        <Sidebar onOpen={onOpen} loadMessages={undefined} />
-        <Chat signOut={() => signOut(auth)} />
-      </Flex>
-    </>
-  );
+          </Stack>
+          <Sidebar onOpen={onOpen} loadMessages={undefined} />
+          <Chat signOut={() => signOut(auth)} />
+        </Flex>
+      </>
+    );
+  }
 }
 
 export default withAuthUser({

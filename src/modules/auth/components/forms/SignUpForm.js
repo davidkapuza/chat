@@ -1,15 +1,13 @@
+import { updateUser } from "@/app/slices/user-slice";
 import { Button, Divider, Flex, Stack, Text } from "@chakra-ui/react";
+import { getAuth } from "firebase/auth";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { Form, Formik } from "formik";
+import React from "react";
 import { FcGoogle } from "react-icons/fc";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import TextInput from "../elements/TextInput";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
-import React from "react";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/app/slices/user-slice";
 
 function SignUpForm({
   createUserWithEmailAndPassword,
@@ -17,7 +15,7 @@ function SignUpForm({
   updateProfile,
 }) {
   const firestore = getFirestore();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const auth = getAuth();
 
   return (
@@ -45,19 +43,15 @@ function SignUpForm({
         { name, surname, email, password },
         { setSubmitting, resetForm }
       ) => {
-        setSubmitting(true);
         const displayName = `${name} ${surname}`;
         const photoURL = `https://avatars.dicebear.com/api/open-peeps/${
-          name + surname
+          displayName
         }.svg?background=%23E2E8F0`;
         createUserWithEmailAndPassword(email, password).then(async () => {
           await updateProfile({
             displayName,
             photoURL,
           });
-          // set(ref(database, "users/" + auth.currentUser.uid), {
-          //   uid: auth.currentUser.uid, email, displayName, photoURL
-          // })
           await setDoc(doc(firestore, "users", auth.currentUser.uid), {
             uid: auth.currentUser.uid,
             email,
@@ -65,16 +59,18 @@ function SignUpForm({
             photoURL,
             friends: [],
           });
-          dispatch(setUser({
-            uid: auth.currentUser.uid,
-            email,
-            displayName,
-            photoURL,
-            friends: [],
-          }))
+          // dispatch(
+          //   updateUser({
+          //     uid: auth.currentUser.uid,
+          //     email,
+          //     displayName,
+          //     photoURL,
+          //     friends: [],
+          //   })
+          // );
         });
-        resetForm();
         setSubmitting(false);
+        resetForm();
       }}
     >
       {({ isSubmitting }) => (
