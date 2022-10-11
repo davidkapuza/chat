@@ -12,29 +12,32 @@ import {
 import { getAuth, signOut } from "firebase/auth";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { Suspense } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { IoBookmarkOutline, IoChatboxEllipsesOutline } from "react-icons/io5";
-
-const SearchUsersModal = dynamic(() =>
-  import("@/common/components/modals/search-users/SearchUsers")
-);
 
 function Dashboard() {
   const auth = getAuth();
   const AuthUser = useAuthUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isSmallerThanMD] = useMediaQuery("(max-width: 48em)");
-
+  const SearchUsersModal = isOpen
+    ? dynamic(() =>
+        import("@/common/components/modals/search-users/SearchUsers")
+      )
+    : null;
   return (
     <>
       {isOpen && (
-        <SearchUsersModal
-          isOpen={isOpen}
-          onClose={onClose}
-          authUser={AuthUser}
-        />
+        <Suspense fallback={<Loader />}>
+          <SearchUsersModal
+            // @ts-ignore
+            isOpen={isOpen}
+            onClose={onClose}
+          />
+        </Suspense>
       )}
+
       <Flex direction="row">
         <Stack
           // ! Navbar
@@ -73,7 +76,7 @@ function Dashboard() {
             aria-label="favourites section"
           />
         </Stack>
-        <Sidebar onOpen={onOpen} authUser={AuthUser} loadMessages={undefined} />
+        <Sidebar onOpen={onOpen} loadMessages={undefined} />
         <Chat signOut={() => signOut(auth)} />
       </Flex>
     </>

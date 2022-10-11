@@ -1,3 +1,4 @@
+import { updateUser } from "@/app/slices/user-slice";
 import CustomAlert from "@/components/elements/alert/Alert";
 import Loader from "@/components/elements/loader/Loader";
 import {
@@ -30,15 +31,16 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import React, { useState } from "react";
-import {
-  useCollectionData,
-  useDocumentData,
-} from "react-firebase-hooks/firestore";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { RiCheckDoubleFill, RiSearchLine } from "react-icons/ri";
+import { useDispatch, useSelector } from "react-redux";
 
-function SearchUsersModal({ isOpen, onClose, authUser }) {
+function SearchUsersModal({ isOpen, onClose }) {
   const firestore = getFirestore();
+  const dispatch = useDispatch();
+  // @ts-ignore
+  const host = useSelector((state) => state.user.user);
   const [userNameQuery, setUserNameQuery] = useState("");
   const q =
     userNameQuery &&
@@ -48,11 +50,8 @@ function SearchUsersModal({ isOpen, onClose, authUser }) {
       startAt(userNameQuery),
       endAt(userNameQuery + "\uf8ff")
     );
-  const [users, usersLoading, usersError] = useCollectionData(q);
-  const [currentUser, userLoading, userError] = useDocumentData(
-    doc(firestore, "users/" + authUser.id)
-  );
-  const error = usersError || userError;
+  const [users, loading, error] = useCollectionData(q);
+
   // const [snapshots, loading, error] = useList(ref(database, "user-chats/" + authUser.id));
   // function addToTheFriendsList(uid) {
   //   const newChatKey = push(child(ref(database), "chats")).key;
@@ -66,12 +65,18 @@ function SearchUsersModal({ isOpen, onClose, authUser }) {
   //   return update(ref(database), updates);
   // }
 
+  /**
+   * @param {string} uid
+   * @param {string} displayName
+   * @param {string} photoURL
+   */
   async function addToTheFriendsList(uid, displayName, photoURL) {
-    const friendsList = [...new Set([...currentUser.friends, uid])];
-    await updateDoc(doc(firestore, "users/" + authUser.id), {
+    const friendsList = [...new Set([...host.friends, uid])];
+    await updateDoc(doc(firestore, "users/" + host.uid), {
       friends: friendsList,
     });
-    await setDoc(doc(firestore, "users", authUser.id, "user-chats", uid), {
+
+    await setDoc(doc(firestore, "users", host.uid, "user-chats", uid), {
       uid,
       displayName,
       photoURL,
@@ -79,6 +84,11 @@ function SearchUsersModal({ isOpen, onClose, authUser }) {
       lastMsgTimestamp: serverTimestamp(),
       unreadCount: 0,
     });
+    dispatch(
+      updateUser({
+        friends: friendsList,
+      })
+    );
   }
 
   return (
@@ -102,9 +112,9 @@ function SearchUsersModal({ isOpen, onClose, authUser }) {
           <CustomAlert error={error} />
           <List spacing="5">
             {users?.map((user) => {
-              const isFriend = currentUser?.friends?.includes(user.uid);
+              const isFriend = host.friends.includes(user.uid);
               return (
-                authUser.id !== user.uid && (
+                host.uid !== user.uid && (
                   <ListItem key={user.uid}>
                     <Flex w="100%" align="center" px="10px" borderRadius="2xl">
                       <Avatar
@@ -131,7 +141,7 @@ function SearchUsersModal({ isOpen, onClose, authUser }) {
                             <AiOutlineUserAdd />
                           )
                         }
-                        aria-label="user is friend"
+                        aria-label="user status"
                       ></IconButton>
                     </Flex>
                   </ListItem>
@@ -139,7 +149,7 @@ function SearchUsersModal({ isOpen, onClose, authUser }) {
               );
             })}
           </List>
-          {usersLoading && <Loader />}
+          {loading && <Loader />}
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -28,20 +28,24 @@ import React, { useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineMore, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { RiSearchLine } from "react-icons/ri";
+import { useSelector } from "react-redux";
+import Alert from "@/components/elements/alert/Alert";
 
-function Sidebar({ onOpen, authUser, loadMessages }) {
+function Sidebar({ onOpen, loadMessages }) {
   const firestore = getFirestore();
+  // @ts-ignore
+  const user = useSelector(state => state.user.user)
   const [userNameQuery, setUserNameQuery] = useState("");
   const q = userNameQuery
     ? query(
-        collection(firestore, "users", authUser.id, "user-chats"),
+        collection(firestore, "users", user.uid, "user-chats"),
         orderBy("displayName"),
         startAt(userNameQuery),
         endAt(userNameQuery + "\uf8ff")
       )
-    : query(collection(firestore, "users", authUser.id, "user-chats"));
+    : query(collection(firestore, "users", user.uid, "user-chats"));
 
-  const [chats, chatsLoading, chatsError] = useCollectionData(q);
+  const [chats, loading, error] = useCollectionData(q);
 
   return (
     <Stack
@@ -85,6 +89,7 @@ function Sidebar({ onOpen, authUser, loadMessages }) {
           />
         </InputGroup>
       </Box>
+      <Alert error={error} />
       <List>
         {chats?.map((chat) => {
           return (
@@ -124,7 +129,7 @@ function Sidebar({ onOpen, authUser, loadMessages }) {
             </ListItem>
           );
         })}
-        {chatsLoading && <Loader />}
+        {loading && <Loader />}
       </List>
     </Stack>
   );

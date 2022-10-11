@@ -7,6 +7,9 @@ import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/app/slices/user-slice";
 
 function SignUpForm({
   createUserWithEmailAndPassword,
@@ -14,7 +17,7 @@ function SignUpForm({
   updateProfile,
 }) {
   const firestore = getFirestore();
-  const database = getDatabase();
+  const dispatch = useDispatch()
   const auth = getAuth();
 
   return (
@@ -62,6 +65,13 @@ function SignUpForm({
             photoURL,
             friends: [],
           });
+          dispatch(setUser({
+            uid: auth.currentUser.uid,
+            email,
+            displayName,
+            photoURL,
+            friends: [],
+          }))
         });
         resetForm();
         setSubmitting(false);

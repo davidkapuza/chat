@@ -8,7 +8,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import WelcomeImg from "../../public/images/Welcome.png";
+import WelcomeImg from "public/images/Welcome.png";
+import { withAuthUser, AuthAction } from "next-firebase-auth";
 
 function Home() {
   return (
@@ -27,8 +28,6 @@ function Home() {
           <Image
             priority
             layout="responsive"
-            // @ts-ignore
-            pos="relative"
             objectFit="contain"
             src={WelcomeImg}
             alt={"Home page image"}
@@ -59,4 +58,8 @@ function Home() {
   );
 }
 
-export default Home;
+export default withAuthUser({
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
+  whenUnauthedBeforeInit: AuthAction.RETURN_NULL,
+  whenUnauthedAfterInit: AuthAction.RENDER,
+})(Home)

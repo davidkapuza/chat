@@ -65,8 +65,6 @@ function Auth() {
           <Image
             priority
             layout="responsive"
-            // @ts-ignore
-            pos="relative"
             objectFit="contain"
             src={AuthImg}
             alt="Auth page image"
