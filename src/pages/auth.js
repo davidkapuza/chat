@@ -5,7 +5,7 @@ import SignUpForm from "@/modules/auth/components/forms/SignUpForm";
 import useAuth from "@/modules/auth/hooks/useAuth";
 import { Box, Container, Flex, Stack, useBoolean } from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
-import { AuthAction, withAuthUser } from "next-firebase-auth";
+import { AuthAction, withAuthUser, useAuthUser } from "next-firebase-auth";
 import Image from "next/image";
 import AuthImg from "public/images/Auth.png";
 import React from "react";
@@ -17,9 +17,10 @@ import {
 } from "react-firebase-hooks/auth";
 
 function Auth() {
-  useAuth()
   const [flag, setFlag] = useBoolean();
+  const AuthUser = useAuthUser()
   const auth = getAuth();
+  useAuth(AuthUser.id)
 
   const [createUserWithEmailAndPassword,,, authSignUpError] =
     useCreateUserWithEmailAndPassword(auth);
@@ -30,7 +31,6 @@ function Auth() {
   const [updateProfile,, updateError] = useUpdateProfile(auth);
   const authError =
     authSignUpError || authSignInError || googleAuthError || updateError;
-  
   
   return (
     <Container

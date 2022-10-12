@@ -8,17 +8,9 @@ import Message from "../../elements/message/Message";
 function Messages() {
   const database = getDatabase();
   const chatId = useSelector((state) => state.chat.id);
-  // const [messages, setMessages] = useState([])
   const [snapshots, loading, error] = useList(
     query(ref(database, "/messages/" + chatId), orderByValue("timestamp"))
   );
-
-  // const starCountRef = ref(database, 'messages/' + chatId);
-  // onValue(starCountRef, (snapshot) => {
-  //   const data = snapshot.val();
-  //   const key = snapshot.key
-  //   setMessages((prevValue) => [...prevValue, {key, data}])
-  // });
 
   return (
     <VStack

@@ -14,7 +14,7 @@ function MessageInput() {
   const database = getDatabase();
   const [message, setMessage] = useState("");
   const chatId = useSelector((state) => state.chat.id);
-  const user = useSelector((state) => state.user.props);
+  const user = useSelector((state) => state.user);
 
   const sendMessage = (e) => {
     console.log("sended...")

@@ -7,6 +7,7 @@ import chatReduer from '@/modules/chat/chat-slice'
 
 const persistConfig = {
   key: 'root',
+  blacklist: ["user"],
   storage,
 }
 

@@ -1,28 +1,18 @@
 import {
   Avatar,
   Button,
-  FormControl,
   Heading,
   HStack,
-  Icon,
   IconButton,
-  Input,
   VStack,
 } from "@chakra-ui/react";
-import { getDatabase } from "firebase/database";
-import React, { useState } from "react";
+import React from "react";
 import { AiOutlineMore } from "react-icons/ai";
 import { IoMdCheckmark } from "react-icons/io";
-import { RiSendPlaneFill } from "react-icons/ri";
-import { useSelector } from "react-redux";
 import MessageInput from "./components/features/message-input/MessageInput";
 import Messages from "./components/features/messages/Messages";
 
 function Chat({ signOut }) {
-  const chatId = useSelector((state) => state.chat.id);
-  const database = getDatabase();
-  const [message, setMessage] = useState("");
-
   return (
     <VStack
       // ! Chat
@@ -69,9 +59,8 @@ function Chat({ signOut }) {
         />
       </HStack>
 
-      <Messages/>
-      <MessageInput/>
-      
+      <Messages />
+      <MessageInput />
     </VStack>
   );
 }

@@ -1,11 +1,9 @@
-import { updateUser } from "@/app/slices/user-slice";
 import { Button, Divider, Flex, Stack, Text } from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { Form, Formik } from "formik";
 import React from "react";
 import { FcGoogle } from "react-icons/fc";
-import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import TextInput from "../elements/TextInput";
 
@@ -15,7 +13,6 @@ function SignUpForm({
   updateProfile,
 }) {
   const firestore = getFirestore();
-  const dispatch = useDispatch();
   const auth = getAuth();
 
   return (
@@ -44,9 +41,7 @@ function SignUpForm({
         { setSubmitting, resetForm }
       ) => {
         const displayName = `${name} ${surname}`;
-        const photoURL = `https://avatars.dicebear.com/api/open-peeps/${
-          displayName
-        }.svg?background=%23E2E8F0`;
+        const photoURL = `https://avatars.dicebear.com/api/open-peeps/${displayName}.svg?background=%23E2E8F0`;
         createUserWithEmailAndPassword(email, password).then(async () => {
           await updateProfile({
             displayName,
@@ -59,15 +54,6 @@ function SignUpForm({
             photoURL,
             friends: [],
           });
-          // dispatch(
-          //   updateUser({
-          //     uid: auth.currentUser.uid,
-          //     email,
-          //     displayName,
-          //     photoURL,
-          //     friends: [],
-          //   })
-          // );
         });
         setSubmitting(false);
         resetForm();

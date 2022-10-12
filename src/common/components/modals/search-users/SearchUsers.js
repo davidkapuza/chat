@@ -43,7 +43,7 @@ function SearchUsersModal({ isOpen, onClose }) {
   const database = getDatabase();
   const dispatch = useDispatch();
   // @ts-ignore
-  const host = useSelector((state) => state.user.props);
+  const host = useSelector((state) => state.user);
   const [userNameQuery, setUserNameQuery] = useState("");
   const q =
     userNameQuery &&
@@ -91,7 +91,7 @@ function SearchUsersModal({ isOpen, onClose }) {
       unreadCount: 0,
     };
 
-    set(ref(database, "/messages/" + chatId));
+    set(ref(database, "/messages/" + chatId), {});
     await setDoc(doc(firestore, "chats", chatId), chatData);
   }
 

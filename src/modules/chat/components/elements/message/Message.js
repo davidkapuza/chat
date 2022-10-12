@@ -3,7 +3,7 @@ import { Flex, Avatar, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 
 function Message({ message }) {
-  const user = useSelector((state) => state.user.props);
+  const user = useSelector((state) => state.user);
   const { text, sender, timestamp } = message;
   const isMine = sender.uid === user.uid
   return (
@@ -14,7 +14,7 @@ function Message({ message }) {
     >
       <Avatar
         size="sm"
-        // mt="auto"
+        mt={isMine ? 0 : "auto"}
         name={sender.displayName}
         src={sender.photoURL}
       />

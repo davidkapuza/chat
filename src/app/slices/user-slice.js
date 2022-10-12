@@ -1,7 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  props: {}
+  uid: null,
+  displayName: null,
+  email: null,
+  photoURL: null,
+  friends: [],
 }
 
 export const userSlice = createSlice({
@@ -9,13 +13,13 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action) => {
-      state.props = {...state.props, ...action.payload}
+      Object.assign(state, action.payload)
     },
     removeUser: (state) => {
-      state.props = initialState
+      Object.assign(state, initialState)
     },
     deleteFriend: (state, action) => {
-      state.props.friends = state.props.friends.filter(uid => uid !== action.payload)
+      state.friends = state.friends.filter(uid => uid !== action.payload)
     }
   },
 })

@@ -28,14 +28,12 @@ import { setChat } from "../../../../modules/chat/chat-slice";
 function Sidebar({ onOpen }) {
   const firestore = getFirestore();
   // @ts-ignore
-  const user = useSelector((state) => state.user.props);
-
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   // TODO add search in chats
-  const [userNameQuery, setUserNameQuery] = useState("");
 
-  const q = query(
+  const [chats, loading, error] = useCollectionData(query(
     collection(firestore, "chats"),
     where("members", "array-contains", {
       uid: user.uid,
@@ -43,8 +41,7 @@ function Sidebar({ onOpen }) {
       email: user.email,
       photoURL: user.photoURL,
     })
-  );
-  const [chats, loading, error] = useCollectionData(q);
+  ));
   
   return (
     <Stack
@@ -84,7 +81,7 @@ function Sidebar({ onOpen }) {
             type="text"
             variant="filled"
             placeholder="Search..."
-            onChange={(e) => setUserNameQuery(e.target.value)}
+            onChange={(e) => console.log(e.target.value)}
           />
         </InputGroup>
       </Box>
