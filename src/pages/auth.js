@@ -2,7 +2,7 @@ import CustomAlert from "@/common/components/elements/alert/Alert";
 import AuthHeading from "@/modules/auth/components/elements/AuthHeading";
 import SignInForm from "@/modules/auth/components/forms/SignInForm";
 import SignUpForm from "@/modules/auth/components/forms/SignUpForm";
-import useAuth from "@/modules/hooks/useAuth";
+import useAuth from "@/modules/auth/hooks/useAuth";
 import { Box, Container, Flex, Stack, useBoolean } from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
 import { AuthAction, withAuthUser } from "next-firebase-auth";

@@ -19,6 +19,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import {
+  addDoc,
   collection,
   doc,
   endAt,
@@ -35,9 +36,11 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { RiCheckDoubleFill, RiSearchLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
+import { getDatabase, push, child, update, ref, set } from "firebase/database";
 
 function SearchUsersModal({ isOpen, onClose }) {
   const firestore = getFirestore();
+  const database = getDatabase();
   const dispatch = useDispatch();
   // @ts-ignore
   const host = useSelector((state) => state.user.props);
@@ -52,43 +55,44 @@ function SearchUsersModal({ isOpen, onClose }) {
     );
   const [users, loading, error] = useCollectionData(q);
 
-  // const [snapshots, loading, error] = useList(ref(database, "user-chats/" + authUser.id));
-  // function addToTheFriendsList(uid) {
-  //   const newChatKey = push(child(ref(database), "chats")).key;
-  //   const chatData = {
-  //     members: [authUser.id, uid],
-  //   };
-
-  //   const updates = {};
-  //   updates["/chats/" + newChatKey] = chatData;
-  //   updates["/user-chats/" + authUser.id + "/" + newChatKey] = chatData;
-  //   return update(ref(database), updates);
-  // }
-
   /**
    * @param {string} uid
    * @param {string} displayName
    * @param {string} photoURL
+   * @param {string} email
    */
-  async function addToTheFriendsList(uid, displayName, photoURL) {
+  async function addToTheFriendsList(uid, displayName, photoURL, email) {
+    // * update friends list in redux & firestore
     const friendsList = [...new Set([...host.friends, uid])];
     await updateDoc(doc(firestore, "users/" + host.uid), {
       friends: friendsList,
-    });
-
-    await setDoc(doc(firestore, "users", host.uid, "user-chats", uid), {
-      uid,
-      displayName,
-      photoURL,
-      lastMsg: "",
-      lastMsgTimestamp: serverTimestamp(),
-      unreadCount: 0,
     });
     dispatch(
       updateUser({
         friends: friendsList,
       })
     );
+    // * create "messages" in real time database & "chats" in firestore
+
+    const chatId = push(child(ref(database), "chats")).key;
+    const chatData = {
+      chatId,
+      members: [
+        {
+          uid: host.uid,
+          displayName: host.displayName,
+          photoURL: host.photoURL,
+          email: host.email,
+        },
+        { uid, displayName, photoURL, email },
+      ],
+      lastMsg: "",
+      lastMsgTimestamp: serverTimestamp(),
+      unreadCount: 0,
+    };
+
+    set(ref(database, "/messages/" + chatId));
+    await setDoc(doc(firestore, "chats", chatId), chatData);
   }
 
   return (
@@ -111,27 +115,19 @@ function SearchUsersModal({ isOpen, onClose }) {
           </InputGroup>
           <CustomAlert error={error} />
           <List spacing="5">
-            {users?.map((user) => {
-              const isFriend = host.friends.includes(user.uid);
+            {users?.map(({ uid, displayName, photoURL, email }) => {
+              const isFriend = host.friends.includes(uid);
               return (
-                host.uid !== user.uid && (
-                  <ListItem key={user.uid}>
+                host.uid !== uid && (
+                  <ListItem key={uid}>
                     <Flex w="100%" align="center" px="10px" borderRadius="2xl">
-                      <Avatar
-                        mr="5"
-                        name={user.displayName}
-                        src={user.photoURL}
-                      />
-                      <Heading size="sm">{user.displayName}</Heading>
+                      <Avatar mr="5" name={displayName} src={photoURL} />
+                      <Heading size="sm">{displayName}</Heading>
                       <IconButton
                         ml="auto"
                         variant="ghost"
                         onClick={() =>
-                          addToTheFriendsList(
-                            user.uid,
-                            user.displayName,
-                            user.photoURL
-                          )
+                          addToTheFriendsList(uid, displayName, photoURL, email)
                         }
                         disabled={isFriend}
                         icon={

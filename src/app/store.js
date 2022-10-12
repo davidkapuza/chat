@@ -3,7 +3,7 @@ import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 import userReducer from "./slices/user-slice"
-import chatReduer from '@/common/components/features/chat/chat-slice'
+import chatReduer from '@/modules/chat/chat-slice'
 
 const persistConfig = {
   key: 'root',

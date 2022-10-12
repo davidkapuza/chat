@@ -1,5 +1,6 @@
-import formateDate from "@/utils/formateDate";
+import Alert from "@/components/elements/alert/Alert";
 import Loader from "@/components/elements/loader/Loader";
+import formateDate from "@/utils/formateDate";
 import {
   Avatar,
   Box,
@@ -16,39 +17,35 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import {
-  collection,
-  endAt,
-  getFirestore,
-  orderBy,
-  query,
-  startAt,
-} from "firebase/firestore";
+import { collection, getFirestore, query, where } from "firebase/firestore";
 import React, { useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineMore, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { RiSearchLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
-import Alert from "@/components/elements/alert/Alert";
+import { setChat } from "../../../../modules/chat/chat-slice";
 
-function Sidebar({ onOpen, loadMessages }) {
+function Sidebar({ onOpen }) {
   const firestore = getFirestore();
   // @ts-ignore
-  const user = useSelector((state) => state.user.props)
+  const user = useSelector((state) => state.user.props);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+
+  // TODO add search in chats
   const [userNameQuery, setUserNameQuery] = useState("");
-  const q = userNameQuery
-    ? query(
-        collection(firestore, "users", user.uid, "user-chats"),
-        orderBy("displayName"),
-        startAt(userNameQuery),
-        endAt(userNameQuery + "\uf8ff")
-      )
-    : query(collection(firestore, "users", user.uid, "user-chats"));
 
+  const q = query(
+    collection(firestore, "chats"),
+    where("members", "array-contains", {
+      uid: user.uid,
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+    })
+  );
   const [chats, loading, error] = useCollectionData(q);
-
+  
   return (
     <Stack
       // ! Sidebar
@@ -94,8 +91,12 @@ function Sidebar({ onOpen, loadMessages }) {
       <Alert error={error} />
       <List>
         {chats?.map((chat) => {
+          // * Get other chat member
+          const [{ displayName, photoURL, email }] = chat.members.filter(
+            ({ uid }) => uid !== user.uid
+          );
           return (
-            <ListItem key={chat.uid}>
+            <ListItem key={chat.chatId}>
               <Flex
                 // ! SidebarItem
                 w="100%"
@@ -104,11 +105,11 @@ function Sidebar({ onOpen, loadMessages }) {
                 p="15px 10px"
                 borderRadius="2xl"
                 _hover={{ bg: "gray.100", cursor: "pointer" }}
-                onClick={() => loadMessages(chat.uid)}
+                onClick={() => dispatch(setChat(chat.chatId))}
               >
-                <Avatar name={chat.name} src={chat.photoURL} />
+                <Avatar name={displayName} src={photoURL} />
                 <Box ml="15px" flex="1">
-                  <Heading size="sm">{chat.displayName}</Heading>
+                  <Heading size="sm">{displayName}</Heading>
                   <Text fontSize="smaller">{chat.lastMsg}</Text>
                 </Box>
                 <Box>

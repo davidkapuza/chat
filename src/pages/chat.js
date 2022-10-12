@@ -1,7 +1,7 @@
 import Loader from "@/components/elements/loader/Loader";
-import Chat from "@/components/features/chat/Chat";
+import Chat from "@/modules/chat/Chat";
 import Sidebar from "@/components/features/sidebar/Sidebar";
-import useAuth from "@/modules/hooks/useAuth";
+import useAuth from "@/modules/auth/hooks/useAuth";
 import {
   Avatar,
   Flex,

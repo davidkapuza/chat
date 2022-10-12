@@ -26,7 +26,7 @@ export default function useAuth() {
       }
     };
     getUserFromFirestore();
-  }, [user, dispatch, firestore]);
+  }, [user]);
 
   return [isAuthed, error];
 }

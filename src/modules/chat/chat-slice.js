@@ -10,7 +10,7 @@ export const chatSlice = createSlice({
   reducers: {
     setChat: (state, action) => {
       state.id = action.payload
-    }
+    },
   },
 })
 
