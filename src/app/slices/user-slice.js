@@ -5,7 +5,6 @@ const initialState = {
   displayName: null,
   email: null,
   photoURL: null,
-  friends: [],
 }
 
 export const userSlice = createSlice({
@@ -17,13 +16,10 @@ export const userSlice = createSlice({
     },
     removeUser: (state) => {
       Object.assign(state, initialState)
-    },
-    deleteFriend: (state, action) => {
-      state.friends = state.friends.filter(uid => uid !== action.payload)
     }
   },
 })
 
-export const { updateUser, removeUser, deleteFriend } = userSlice.actions
+export const { updateUser, removeUser, deleteFriend, resetFriends } = userSlice.actions
 
 export default userSlice.reducer

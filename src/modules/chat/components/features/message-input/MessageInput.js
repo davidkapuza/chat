@@ -4,20 +4,19 @@ import {
   push,
   ref,
   serverTimestamp,
-  set,
+  set
 } from "firebase/database";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
+import { RiSendPlaneFill } from "react-icons/ri";
 import { useSelector } from "react-redux";
-import {RiSendPlaneFill} from "react-icons/ri"
 
 function MessageInput() {
   const database = getDatabase();
   const [message, setMessage] = useState("");
-  const chatId = useSelector((state) => state.chat.id);
   const user = useSelector((state) => state.user);
+  const chatId = useSelector((state) => state.chat.id);
 
   const sendMessage = (e) => {
-    console.log("sended...")
     e.preventDefault();
     const msgData = {
       text: message,
@@ -34,10 +33,9 @@ function MessageInput() {
       display="flex"
       // @ts-ignore
       direction="row"
-      position="absolute"
       bottom="0"
       alignItems="center"
-      p="20px 30px 40px"
+      p="10px 30px"
       bg="white"
       onSubmit={(e) => sendMessage(e)}
     >
@@ -59,4 +57,4 @@ function MessageInput() {
   );
 }
 
-export default MessageInput;
+export default memo(MessageInput);

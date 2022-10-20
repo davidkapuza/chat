@@ -12,9 +12,9 @@ function MyApp({ Component, pageProps }) {
   return (
     <ChakraProvider theme={theme}>
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        {/* <PersistGate loading={null} persistor={persistor}> */}
           <Component {...pageProps} />
-        </PersistGate>
+        {/* </PersistGate> */}
       </Provider>
     </ChakraProvider>
   );

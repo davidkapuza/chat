@@ -23,7 +23,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineMore, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { RiSearchLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
-import { setChat } from "../../../../modules/chat/chat-slice";
+import { setChat } from "@/modules/chat/chat-slice";
 
 function Sidebar({ onOpen }) {
   const firestore = getFirestore();
@@ -89,7 +89,7 @@ function Sidebar({ onOpen }) {
       <List>
         {chats?.map((chat) => {
           // * Get other chat member
-          const [{ displayName, photoURL, email }] = chat.members.filter(
+          const [otherMember] = chat.members.filter(
             ({ uid }) => uid !== user.uid
           );
           return (
@@ -102,11 +102,11 @@ function Sidebar({ onOpen }) {
                 p="15px 10px"
                 borderRadius="2xl"
                 _hover={{ bg: "gray.100", cursor: "pointer" }}
-                onClick={() => dispatch(setChat(chat.chatId))}
+                onClick={() => dispatch(setChat({ id: chat.chatId }))}
               >
-                <Avatar name={displayName} src={photoURL} />
+                <Avatar name={otherMember.displayName} src={otherMember.photoURL} />
                 <Box ml="15px" flex="1">
-                  <Heading size="sm">{displayName}</Heading>
+                  <Heading size="sm">{otherMember.displayName}</Heading>
                   <Text fontSize="smaller">{chat.lastMsg}</Text>
                 </Box>
                 <Box>

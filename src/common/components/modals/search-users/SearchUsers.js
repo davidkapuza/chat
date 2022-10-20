@@ -35,14 +35,17 @@ import React, { useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { RiCheckDoubleFill, RiSearchLine } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { getDatabase, push, child, update, ref, set } from "firebase/database";
+import { updateFriendsList } from "@/app/slices/user-friends-slice";
 
 function SearchUsersModal({ isOpen, onClose }) {
   const firestore = getFirestore();
   const database = getDatabase();
   const dispatch = useDispatch();
   // @ts-ignore
+  const [userFriends] = useSelector((state) => state.userFriends.friends, shallowEqual);
+  console.log(userFriends)
   const host = useSelector((state) => state.user);
   const [userNameQuery, setUserNameQuery] = useState("");
   const q =
@@ -62,18 +65,16 @@ function SearchUsersModal({ isOpen, onClose }) {
    * @param {string} email
    */
   async function addToTheFriendsList(uid, displayName, photoURL, email) {
+
     // * update friends list in redux & firestore
-    const friendsList = [...new Set([...host.friends, uid])];
     await updateDoc(doc(firestore, "users/" + host.uid), {
-      friends: friendsList,
+      friends: [...userFriends, uid],
     });
     dispatch(
-      updateUser({
-        friends: friendsList,
-      })
+      updateFriendsList([...userFriends, uid])
     );
-    // * create "messages" in real time database & "chats" in firestore
 
+    // * initialize "messages" in realtime database & "chats" in firestore
     const chatId = push(child(ref(database), "chats")).key;
     const chatData = {
       chatId,
@@ -116,7 +117,7 @@ function SearchUsersModal({ isOpen, onClose }) {
           <CustomAlert error={error} />
           <List spacing="5">
             {users?.map(({ uid, displayName, photoURL, email }) => {
-              const isFriend = host.friends.includes(uid);
+              const isFriend = userFriends.includes(uid);
               return (
                 host.uid !== uid && (
                   <ListItem key={uid}>

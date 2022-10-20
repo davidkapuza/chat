@@ -6,13 +6,19 @@ import {
   IconButton,
   VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { memo } from "react";
 import { AiOutlineMore } from "react-icons/ai";
 import { IoMdCheckmark } from "react-icons/io";
+import { useSelector } from "react-redux";
 import MessageInput from "./components/features/message-input/MessageInput";
 import Messages from "./components/features/messages/Messages";
 
+let counter = 0;
+
 function Chat({ signOut }) {
+console.log(`Chat renders ${++counter} times`)
+
+  // const otherMember = useSelector(({chat}) => chat.with)
   return (
     <VStack
       // ! Chat
@@ -32,14 +38,14 @@ function Chat({ signOut }) {
           // * Only on mobile
           <IconButton variant="ghost" icon={<IoIosArrowBack />} /> 
           */}
-        <Avatar
+        {/* <Avatar
           size="md"
-          name="Jhon Doe"
-          src="https://avatars.dicebear.com/api/open-peeps/JhonDoe.svg?background=%23E2E8F0"
-        />
+          name={otherMember?.displayName}
+          src={otherMember?.photoURL}
+        /> */}
 
         <Heading mr="auto !important" size="sm">
-          Jhon Doe
+          {/* {otherMember?.displayName} */}
         </Heading>
         <Button variant="solidSm" colorScheme="main" onClick={signOut}>
           Sign Out

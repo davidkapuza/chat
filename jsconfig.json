@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "checkJs": true,
+    "module": "commonjs",
     "jsx": "react",
     "downlevelIteration": true,
     "paths": {
