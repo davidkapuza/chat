@@ -89,7 +89,7 @@ function Sidebar({ onOpen }) {
       <List>
         {chats?.map((chat) => {
           // * Get other chat member
-          const [otherMember] = chat.members.filter(
+          const [{displayName, photoURL}] = chat.members.filter(
             ({ uid }) => uid !== user.uid
           );
           return (
@@ -102,11 +102,11 @@ function Sidebar({ onOpen }) {
                 p="15px 10px"
                 borderRadius="2xl"
                 _hover={{ bg: "gray.100", cursor: "pointer" }}
-                onClick={() => dispatch(setChat({ id: chat.chatId }))}
+                onClick={() => dispatch(setChat({ id: chat.chatId, chatDisplayName: displayName, chatPhotoUrl: photoURL }))}
               >
-                <Avatar name={otherMember.displayName} src={otherMember.photoURL} />
+                <Avatar name={displayName} src={photoURL} />
                 <Box ml="15px" flex="1">
-                  <Heading size="sm">{otherMember.displayName}</Heading>
+                  <Heading size="sm">{displayName}</Heading>
                   <Text fontSize="smaller">{chat.lastMsg}</Text>
                 </Box>
                 <Box>

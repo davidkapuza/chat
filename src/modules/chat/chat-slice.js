@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   id: null,
-  with: null,
+  chatDisplayName: null,
+  chatPhotoUrl: null,
 }
 
 export const chatSlice = createSlice({

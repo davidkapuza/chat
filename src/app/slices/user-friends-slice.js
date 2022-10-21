@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, current } from '@reduxjs/toolkit'
 
 const initialState = {
-  friends: [],
+  friends: []
 }
 
 export const userFriendsSlice = createSlice({
@@ -9,13 +9,13 @@ export const userFriendsSlice = createSlice({
   initialState,
   reducers: {
     updateFriendsList: (state, action) => {
-      state.friends.push(action.payload)
+      state.friends = state.friends.concat(action.payload)
     },
     deleteFriend: (state, action) => {
-      state.friends.filter(friend => friend !== action.payload)
+      state.filter(friend => friend !== action.payload)
     },
     deleteFriendsList: (state) => {
-      state.friends = initialState
+      state.friends = []
     },
   },
 })

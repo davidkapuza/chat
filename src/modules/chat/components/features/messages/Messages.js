@@ -9,6 +9,7 @@ import {
 import { memo } from "react";
 import Message from "../../elements/message/Message";
 import { useSelector } from "react-redux";
+import { MapStateToProps, connect } from "react-redux";
 
 function Messages() {
   const chatId = useSelector((state) => state.chat.id);
@@ -18,8 +19,7 @@ function Messages() {
     orderByValue("timestamp")
   );
 
-  const [messages] = useList(chatQuery);
-
+  const [messages] = useList(chatQuery, chatId);
   return (
     <VStack w="100%" h="100%" p="5" overflowY="scroll" spacing="20px">
       {messages.map(({ key, message }) => {
@@ -29,4 +29,5 @@ function Messages() {
   );
 }
 
-export default memo(Messages);
+
+export default Messages;

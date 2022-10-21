@@ -1,28 +1,30 @@
 import { removeUser, updateUser } from "@/app/slices/user-slice";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteFriendsList, updateFriendsList } from "@/app/slices/user-friends-slice";
 
 export default function useAuth(uid) {
   const dispatch = useDispatch();
-  const firestore = getFirestore();
+  const isAuthed = useSelector(state => state.user.uid)
 
   useEffect(() => {
+    const firestore = getFirestore();
+
     const getUserFromFirestore = async () => {
       if (uid) {
+        if (isAuthed) return
         const userSnap = await getDoc(doc(firestore, "users", uid));
         if (userSnap.exists()) {
-          const { friends, ...userData } = userSnap.data();
-          console.log(friends, userData)
+          let { friends, ...userData } = userSnap.data();
+          friends = Object.values(friends)
           dispatch(updateUser(userData));
           dispatch(updateFriendsList(friends));
         }
       } else {
-        dispatch(deleteFriendsList());
-        dispatch(removeUser());
+        dispatch({type: 'store/reset'})
       }
     };
     getUserFromFirestore();
-  }, [uid, dispatch, firestore]);
+  }, [uid, dispatch]);
 }

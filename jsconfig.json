@@ -10,7 +10,7 @@
       "@/common/*": ["src/common/*"],
       "@/components/*": ["src/common/components/*"],
       "@/utils/*": ["src/common/utils/*"],
-      "@/layouts/*": ["src/layouts/*"],
+      "@/layouts/*": ["src/common/layouts/*"],
       "@/modules/*": ["src/modules/*"],
       "@/pages/*": ["src/pages/*"]
     },

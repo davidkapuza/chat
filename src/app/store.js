@@ -10,13 +10,22 @@ const persistConfig = {
   storage,
 }
 
+
 const rootReducer = combineReducers({ 
   userFriends: userFriendsReducer,
   user: userReducer,
   chat: chatReduer,
 })
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+const resettableRootReducer = (state, action) => {
+  if (action.type === 'store/reset') {
+    console.log("reset fires with old state")
+    return rootReducer(undefined, action);
+  }
+  return rootReducer(state, action);
+}
+
+const persistedReducer = persistReducer(persistConfig, resettableRootReducer)
 
 export const store = configureStore({
   reducer: persistedReducer,

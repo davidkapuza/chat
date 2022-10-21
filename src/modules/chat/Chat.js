@@ -13,12 +13,8 @@ import { useSelector } from "react-redux";
 import MessageInput from "./components/features/message-input/MessageInput";
 import Messages from "./components/features/messages/Messages";
 
-let counter = 0;
-
 function Chat({ signOut }) {
-console.log(`Chat renders ${++counter} times`)
-
-  // const otherMember = useSelector(({chat}) => chat.with)
+  const chat = useSelector(({chat}) => chat)
   return (
     <VStack
       // ! Chat
@@ -38,14 +34,14 @@ console.log(`Chat renders ${++counter} times`)
           // * Only on mobile
           <IconButton variant="ghost" icon={<IoIosArrowBack />} /> 
           */}
-        {/* <Avatar
+        <Avatar
           size="md"
-          name={otherMember?.displayName}
-          src={otherMember?.photoURL}
-        /> */}
+          name={chat.chatDisplayName}
+          src={chat.chatPhotoURL}
+        />
 
         <Heading mr="auto !important" size="sm">
-          {/* {otherMember?.displayName} */}
+          {chat.chatDisplayName}
         </Heading>
         <Button variant="solidSm" colorScheme="main" onClick={signOut}>
           Sign Out

@@ -44,9 +44,8 @@ function SearchUsersModal({ isOpen, onClose }) {
   const database = getDatabase();
   const dispatch = useDispatch();
   // @ts-ignore
-  const [userFriends] = useSelector((state) => state.userFriends.friends, shallowEqual);
-  console.log(userFriends)
-  const host = useSelector((state) => state.user);
+  const userFriends = useSelector((state) => state.userFriends.friends, shallowEqual);
+  const user = useSelector((state) => state.user);
   const [userNameQuery, setUserNameQuery] = useState("");
   const q =
     userNameQuery &&
@@ -67,9 +66,10 @@ function SearchUsersModal({ isOpen, onClose }) {
   async function addToTheFriendsList(uid, displayName, photoURL, email) {
 
     // * update friends list in redux & firestore
-    await updateDoc(doc(firestore, "users/" + host.uid), {
+    await updateDoc(doc(firestore, "users/" + user.uid), {
       friends: [...userFriends, uid],
     });
+    console.log([...userFriends, uid])
     dispatch(
       updateFriendsList([...userFriends, uid])
     );
@@ -80,10 +80,10 @@ function SearchUsersModal({ isOpen, onClose }) {
       chatId,
       members: [
         {
-          uid: host.uid,
-          displayName: host.displayName,
-          photoURL: host.photoURL,
-          email: host.email,
+          uid: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          email: user.email,
         },
         { uid, displayName, photoURL, email },
       ],
@@ -119,14 +119,14 @@ function SearchUsersModal({ isOpen, onClose }) {
             {users?.map(({ uid, displayName, photoURL, email }) => {
               const isFriend = userFriends.includes(uid);
               return (
-                host.uid !== uid && (
+                user.uid !== uid && (
                   <ListItem key={uid}>
                     <Flex w="100%" align="center" px="10px" borderRadius="2xl">
                       <Avatar mr="5" name={displayName} src={photoURL} />
                       <Heading size="sm">{displayName}</Heading>
                       <IconButton
                         ml="auto"
-                        variant="ghost"
+                        variant="guser"
                         onClick={() =>
                           addToTheFriendsList(uid, displayName, photoURL, email)
                         }

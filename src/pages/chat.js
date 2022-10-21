@@ -1,6 +1,6 @@
 import Loader from "@/components/elements/loader/Loader";
-import Sidebar from "@/components/features/sidebar/Sidebar";
-import Navbar from "@/components/features/navbar/Navbar";
+import Sidebar from "@/layouts/sidebar/Sidebar";
+import Navbar from "@/layouts/navbar/Navbar";
 import useAuth from "@/modules/auth/hooks/useAuth";
 import { Flex, useDisclosure, useMediaQuery } from "@chakra-ui/react";
 import { getAuth, signOut } from "firebase/auth";

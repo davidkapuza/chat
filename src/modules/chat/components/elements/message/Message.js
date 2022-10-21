@@ -1,13 +1,12 @@
 import React, {memo} from "react";
 import { Flex, Avatar, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
-let counter = 0;
+
 function Message ({ message }) {
   const userUid = useSelector((state) => state.user.uid);
   const { text, sender, timestamp } = message;
   const isMine = sender.uid === userUid
 
-  console.log(`Renders ${++counter} times`)
   return (
     <Flex
       direction={isMine ? "row-reverse" : "row"}
