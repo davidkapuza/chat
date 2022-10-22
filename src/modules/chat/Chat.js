@@ -9,11 +9,13 @@ import {
 import React, { memo } from "react";
 import { AiOutlineMore } from "react-icons/ai";
 import { IoMdCheckmark } from "react-icons/io";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MessageInput from "./components/features/message-input/MessageInput";
 import Messages from "./components/features/messages/Messages";
+import { deleteFriendsList } from "@/app/slices/user-friends-slice";
 
 function Chat({ signOut }) {
+  const dispatch = useDispatch()
   const chat = useSelector(({chat}) => chat)
   return (
     <VStack
@@ -37,7 +39,7 @@ function Chat({ signOut }) {
         <Avatar
           size="md"
           name={chat.chatDisplayName}
-          src={chat.chatPhotoURL}
+          src={chat.chatPhotoUrl}
         />
 
         <Heading mr="auto !important" size="sm">
@@ -51,6 +53,7 @@ function Chat({ signOut }) {
           variant="solidSm"
           colorScheme="main"
           leftIcon={<IoMdCheckmark />}
+          onClick={() => console.log("todo")}
         >
           Friends
         </Button>
@@ -67,4 +70,4 @@ function Chat({ signOut }) {
   );
 }
 
-export default Chat;
+export default memo(Chat);

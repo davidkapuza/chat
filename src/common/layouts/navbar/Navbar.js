@@ -2,6 +2,7 @@ import { Stack, IconButton, Avatar } from "@chakra-ui/react";
 import { AiOutlineUser } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { IoChatboxEllipsesOutline, IoBookmarkOutline } from "react-icons/io5";
+import { memo } from "react";
 
 function Navbar({ isSmallerThanMD }) {
   const user = useSelector((state) => state.user);
@@ -41,4 +42,4 @@ function Navbar({ isSmallerThanMD }) {
   );
 }
 
-export default Navbar;
+export default memo(Navbar);

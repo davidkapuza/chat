@@ -31,7 +31,7 @@ import {
   startAt,
   updateDoc,
 } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { RiCheckDoubleFill, RiSearchLine } from "react-icons/ri";
@@ -153,4 +153,4 @@ function SearchUsersModal({ isOpen, onClose }) {
   );
 }
 
-export default SearchUsersModal;
+export default memo(SearchUsersModal);

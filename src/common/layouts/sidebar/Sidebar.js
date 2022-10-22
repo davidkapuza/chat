@@ -18,7 +18,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { collection, getFirestore, query, where } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineMore, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { RiSearchLine } from "react-icons/ri";
@@ -135,4 +135,4 @@ function Sidebar({ onOpen }) {
   );
 }
 
-export default Sidebar;
+export default memo(Sidebar);

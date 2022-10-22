@@ -1,29 +1,17 @@
 import { useList } from "@/common/hooks/useList";
 import { VStack } from "@chakra-ui/react";
-import {
-  getDatabase,
-  orderByValue,
-  query,
-  ref
-} from "firebase/database";
 import { memo } from "react";
-import Message from "../../elements/message/Message";
 import { useSelector } from "react-redux";
-import { MapStateToProps, connect } from "react-redux";
+import Message from "../../elements/message/Message";
 
 function Messages() {
   const chatId = useSelector((state) => state.chat.id);
-  const database = getDatabase();
-  const chatQuery = query(
-    ref(database, "/messages/" + chatId),
-    orderByValue("timestamp")
-  );
+  const [messages] = useList(chatId);
 
-  const [messages] = useList(chatQuery, chatId);
   return (
     <VStack w="100%" h="100%" p="5" overflowY="scroll" spacing="20px">
       {messages.map(({ key, message }) => {
-        return <Message key={key} message={message} />;
+        return <Message key={key} message={message} chatId={ chatId} />;
       })}
     </VStack>
   );
