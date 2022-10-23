@@ -1,9 +1,8 @@
 import Loader from "@/components/elements/loader/Loader";
-import Sidebar from "@/layouts/sidebar/Sidebar";
 import Navbar from "@/layouts/navbar/Navbar";
+import Sidebar from "@/layouts/sidebar/Sidebar";
 import useAuth from "@/modules/auth/hooks/useAuth";
 import { Flex, useDisclosure, useMediaQuery } from "@chakra-ui/react";
-import { getAuth, signOut } from "firebase/auth";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 import dynamic from "next/dynamic";
 import React, { Suspense } from "react";
@@ -12,13 +11,11 @@ const SearchUsersModal = dynamic(() =>
   import("@/components/modals/search-users/SearchUsers")
 );
 
-function Dashboard() {
-  const auth = getAuth();
+function DesktopChat() {
   const AuthUser = useAuthUser();
+  useAuth(AuthUser.id);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isSmallerThanMD] = useMediaQuery("(max-width: 48em)");
-  useAuth(AuthUser.id);
-
   const Chat = isSmallerThanMD
     ? () => null
     : dynamic(() => import("@/modules/chat/Chat"));
@@ -35,7 +32,7 @@ function Dashboard() {
         <Navbar isSmallerThanMD={isSmallerThanMD} />
         <Sidebar onOpen={onOpen} />
         <Suspense fallback={<Loader />}>
-          <Chat signOut={() => signOut(auth)} />
+          <Chat />
         </Suspense>
       </Flex>
     </>
@@ -46,4 +43,4 @@ export default withAuthUser({
   whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
   whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
   LoaderComponent: Loader,
-})(Dashboard);
+})(DesktopChat);

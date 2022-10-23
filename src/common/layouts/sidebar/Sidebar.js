@@ -16,33 +16,59 @@ import {
   ListItem,
   Stack,
   Text,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { collection, getFirestore, query, where } from "firebase/firestore";
-import React, { memo, useState } from "react";
+import { memo, useEffect } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineMore, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { RiSearchLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { setChat } from "@/modules/chat/chat-slice";
+import { useRouter } from "next/router";
 
 function Sidebar({ onOpen }) {
-  const firestore = getFirestore();
-  // @ts-ignore
-  const user = useSelector((state) => state.user);
+  const router = useRouter();
   const dispatch = useDispatch();
+  const firestore = getFirestore();
+  const user = useSelector((state) => state.user);
+  const chat = useSelector((state) => state.chat);
+  const [isSmallerThanMD] = useMediaQuery("(max-width: 48em)");
 
   // TODO add search in chats
 
-  const [chats, loading, error] = useCollectionData(query(
-    collection(firestore, "chats"),
-    where("members", "array-contains", {
-      uid: user.uid,
-      displayName: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-    })
-  ));
-  
+  const [chats, loading, error] = useCollectionData(
+    query(
+      collection(firestore, "chats"),
+      where("members", "array-contains", {
+        uid: user.uid,
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+      })
+    )
+  );
+
+  useEffect(() => {
+    if (!chat.id && !loading) {
+      console.log("setDefaultChat fires")
+      // Get first chat data
+      const firstChatId = chats[0].chatId;
+      const [{ displayName, photoURL }] = chats[0].members.filter(
+        ({ uid }) => uid !== user.uid
+      );
+      openChat(firstChatId, displayName, photoURL);
+    }
+  }, []);
+
+  function openChat(id, chatDisplayName, chatPhotoUrl) {
+    dispatch(setChat({ id, chatDisplayName, chatPhotoUrl }));
+
+    if (isSmallerThanMD) {
+      router.push("/chat/" + id);
+    }
+  }
+
   return (
     <Stack
       // ! Sidebar
@@ -89,7 +115,7 @@ function Sidebar({ onOpen }) {
       <List>
         {chats?.map((chat) => {
           // * Get other chat member
-          const [{displayName, photoURL}] = chat.members.filter(
+          const [{ displayName, photoURL }] = chat.members.filter(
             ({ uid }) => uid !== user.uid
           );
           return (
@@ -102,7 +128,7 @@ function Sidebar({ onOpen }) {
                 p="15px 10px"
                 borderRadius="2xl"
                 _hover={{ bg: "gray.100", cursor: "pointer" }}
-                onClick={() => dispatch(setChat({ id: chat.chatId, chatDisplayName: displayName, chatPhotoUrl: photoURL }))}
+                onClick={() => openChat(chat.chatId, displayName, photoURL)}
               >
                 <Avatar name={displayName} src={photoURL} />
                 <Box ml="15px" flex="1">

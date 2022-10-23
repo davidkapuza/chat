@@ -1,4 +1,4 @@
-import { updateUser } from "@/app/slices/user-slice";
+import { updateFriendsList } from "@/app/slices/user-friends-slice";
 import CustomAlert from "@/components/elements/alert/Alert";
 import Loader from "@/components/elements/loader/Loader";
 import {
@@ -18,8 +18,8 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
+import { child, getDatabase, push, ref, set } from "firebase/database";
 import {
-  addDoc,
   collection,
   doc,
   endAt,
@@ -31,20 +31,21 @@ import {
   startAt,
   updateDoc,
 } from "firebase/firestore";
-import React, { useState, memo } from "react";
+import React, { memo, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { RiCheckDoubleFill, RiSearchLine } from "react-icons/ri";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { getDatabase, push, child, update, ref, set } from "firebase/database";
-import { updateFriendsList } from "@/app/slices/user-friends-slice";
 
 function SearchUsersModal({ isOpen, onClose }) {
   const firestore = getFirestore();
   const database = getDatabase();
   const dispatch = useDispatch();
   // @ts-ignore
-  const userFriends = useSelector((state) => state.userFriends.friends, shallowEqual);
+  const userFriends = useSelector(
+    (state) => state.userFriends.friends,
+    shallowEqual
+  );
   const user = useSelector((state) => state.user);
   const [userNameQuery, setUserNameQuery] = useState("");
   const q =
@@ -64,15 +65,12 @@ function SearchUsersModal({ isOpen, onClose }) {
    * @param {string} email
    */
   async function addToTheFriendsList(uid, displayName, photoURL, email) {
-
+    // TODO create custom hook for adding friends
     // * update friends list in redux & firestore
     await updateDoc(doc(firestore, "users/" + user.uid), {
       friends: [...userFriends, uid],
     });
-    console.log([...userFriends, uid])
-    dispatch(
-      updateFriendsList([...userFriends, uid])
-    );
+    dispatch(updateFriendsList([...userFriends, uid]));
 
     // * initialize "messages" in realtime database & "chats" in firestore
     const chatId = push(child(ref(database), "chats")).key;
@@ -126,7 +124,7 @@ function SearchUsersModal({ isOpen, onClose }) {
                       <Heading size="sm">{displayName}</Heading>
                       <IconButton
                         ml="auto"
-                        variant="guser"
+                        variant="ghost"
                         onClick={() =>
                           addToTheFriendsList(uid, displayName, photoURL, email)
                         }

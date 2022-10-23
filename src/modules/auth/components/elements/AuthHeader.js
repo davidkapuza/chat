@@ -2,7 +2,7 @@ import Link from "next/link";
 import { IconButton, Box, Heading, Text, Button } from "@chakra-ui/react";
 import { BsArrow90DegLeft } from "react-icons/bs";
 
-function AuthHeading({setFlag, flag}) {
+function AuthHeader({setFlag, flag}) {
   return (
     <>
       <Link href="/" passHref>
@@ -30,4 +30,4 @@ function AuthHeading({setFlag, flag}) {
   );
 }
 
-export default AuthHeading;
+export default AuthHeader;
