@@ -50,8 +50,8 @@ function Sidebar({ onOpen }) {
   );
 
   useEffect(() => {
-    if (!chat.id && !loading) {
-      console.log("setDefaultChat fires")
+    if (!chat.id && !loading && chats?.length && !isSmallerThanMD) {
+      console.log(chats)
       // Get first chat data
       const firstChatId = chats[0].chatId;
       const [{ displayName, photoURL }] = chats[0].members.filter(
@@ -59,7 +59,7 @@ function Sidebar({ onOpen }) {
       );
       openChat(firstChatId, displayName, photoURL);
     }
-  }, []);
+  }, [chats]);
 
   function openChat(id, chatDisplayName, chatPhotoUrl) {
     dispatch(setChat({ id, chatDisplayName, chatPhotoUrl }));

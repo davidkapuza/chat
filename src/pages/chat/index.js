@@ -1,9 +1,8 @@
 import Loader from "@/components/elements/loader/Loader";
 import Navbar from "@/layouts/navbar/Navbar";
 import Sidebar from "@/layouts/sidebar/Sidebar";
-import useAuth from "@/modules/auth/hooks/useAuth";
 import { Flex, useDisclosure, useMediaQuery } from "@chakra-ui/react";
-import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
 import dynamic from "next/dynamic";
 import React, { Suspense } from "react";
 
@@ -12,8 +11,6 @@ const SearchUsersModal = dynamic(() =>
 );
 
 function DesktopChat() {
-  const AuthUser = useAuthUser();
-  useAuth(AuthUser.id);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isSmallerThanMD] = useMediaQuery("(max-width: 48em)");
   const Chat = isSmallerThanMD

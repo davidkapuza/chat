@@ -43,7 +43,7 @@ function SearchUsersModal({ isOpen, onClose }) {
   const dispatch = useDispatch();
   // @ts-ignore
   const userFriends = useSelector(
-    (state) => state.userFriends.friends,
+    (state) => state["user-friends"],
     shallowEqual
   );
   const user = useSelector((state) => state.user);

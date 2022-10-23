@@ -1,9 +1,8 @@
-import { getAuth, signOut } from 'firebase/auth'
+import Loader from "@/components/elements/loader/Loader";
 import { useMediaQuery } from '@chakra-ui/react';
+import { AuthAction, withAuthUser } from "next-firebase-auth";
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-import Loader from "@/components/elements/loader/Loader";
-import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 
 
 function MobileChat() {

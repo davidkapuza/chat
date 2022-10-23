@@ -1,11 +1,15 @@
-import { AuthAction, withAuthUser, useAuthUser } from "next-firebase-auth";
 import Auth from "@/modules/auth/Auth";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 function AuthPage() {
-  const AuthUser = useAuthUser()
-  return (
-    <Auth user={ AuthUser } />
-  );
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch({ type: "store/reset" });
+  }, [dispatch]);
+
+  return <Auth />;
 }
 
 export default withAuthUser({

@@ -2,7 +2,6 @@ import CustomAlert from "@/common/components/elements/alert/Alert";
 import AuthHeader from "@/modules/auth/components/elements/AuthHeader";
 import SignInForm from "@/modules/auth/components/forms/SignInForm";
 import SignUpForm from "@/modules/auth/components/forms/SignUpForm";
-import useAuth from "@/modules/auth/hooks/useAuth";
 import { Box, Container, Flex, Stack, useBoolean } from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
 import Image from "next/image";
@@ -14,8 +13,7 @@ import {
   useUpdateProfile
 } from "react-firebase-hooks/auth";
 
-function Auth({user}) {
-  useAuth(user.id)
+function Auth() {
   const auth = getAuth();
   const [flag, setFlag] = useBoolean();
 

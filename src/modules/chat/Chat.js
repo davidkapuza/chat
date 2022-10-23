@@ -21,4 +21,4 @@ function Chat() {
   );
 }
 
-export default memo(Chat);
+export default Chat;

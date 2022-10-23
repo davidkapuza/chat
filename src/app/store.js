@@ -12,14 +12,14 @@ const persistConfig = {
 
 
 const rootReducer = combineReducers({ 
-  userFriends: userFriendsReducer,
+  ["user-friends"]: userFriendsReducer,
   user: userReducer,
   chat: chatReduer,
 })
 
 const resettableRootReducer = (state, action) => {
   if (action.type === 'store/reset') {
-    console.log("reset fires with old state")
+    console.log("store reset")
     return rootReducer(undefined, action);
   }
   return rootReducer(state, action);
