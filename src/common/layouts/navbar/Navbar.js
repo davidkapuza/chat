@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import { IoChatboxEllipsesOutline, IoBookmarkOutline } from "react-icons/io5";
 import { memo } from "react";
 
-function Navbar({ isSmallerThanMD }) {
-  const user = useSelector((state) => state.user);
+function Navbar() {
+  
   return (
     <Stack
       position={{ base: "fixed", md: "relative" }}
@@ -15,19 +15,11 @@ function Navbar({ isSmallerThanMD }) {
       direction={{ base: "row", md: "column" }}
       justify={{ base: "center", md: "start" }}
       align="center"
-      h={{ base: "120px", md: "100vh" }}
+      h={{ base: "120px", md: "100%" }}
       minW={{ base: "100%", md: "100px" }}
       pt="40px"
     >
-      {isSmallerThanMD ? (
-        <IconButton
-          variant="ghost"
-          icon={<AiOutlineUser />}
-          aria-label="user profile"
-        />
-      ) : (
-        <Avatar name={user.displayName} src={user.photoURL} mb="8" />
-      )}
+
       <IconButton
         variant="ghost"
         icon={<IoChatboxEllipsesOutline />}
@@ -35,8 +27,8 @@ function Navbar({ isSmallerThanMD }) {
       ></IconButton>
       <IconButton
         variant="ghost"
-        icon={<IoBookmarkOutline />}
-        aria-label="favourites section"
+        icon={<AiOutlineUser />}
+        aria-label="profile"
       />
     </Stack>
   );

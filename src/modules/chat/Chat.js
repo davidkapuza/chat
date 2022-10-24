@@ -7,7 +7,7 @@ import Messages from "./components/features/messages/Messages";
 function Chat() {
   return (
     <VStack
-      w="100%"
+      flex="1"
       p="40px 30px"
       direction="column"
       display="flex"

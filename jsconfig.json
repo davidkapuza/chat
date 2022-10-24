@@ -9,6 +9,7 @@
       "@/app/*": ["src/app/*"],
       "@/common/*": ["src/common/*"],
       "@/components/*": ["src/common/components/*"],
+      "@/hooks/*": ["src/common/hooks/*"],
       "@/utils/*": ["src/common/utils/*"],
       "@/layouts/*": ["src/common/layouts/*"],
       "@/modules/*": ["src/modules/*"],
