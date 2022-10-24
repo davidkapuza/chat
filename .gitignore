@@ -44,3 +44,7 @@ yarn-error.log
 *.rules*
 /functions
 .github
+
+# all .json except package.json
+*.json
+!package.json
